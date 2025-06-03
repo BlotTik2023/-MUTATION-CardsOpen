@@ -3,156 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Коллекционные карточки</title>
+    <title></title>
     <style>
-        /* Все предыдущие стили остаются без изменений */
-        /* Добавляем новые стили для группировки карт */
-		
-		/* Добавляем новые стили для счетчиков игроков */
-		.player-counters {
-			display: flex;
-			justify-content: center;
-			gap: 20px;
-			margin-bottom: 20px;
-		}
-
-		.player-counter {
-			background-color: rgba(233, 233, 233, 1);
-			padding: 10px 20px;
-			border-radius: 10px;
-			font-weight: bold;
-			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-		}
-		
-		.online-counter {
-			color: #4CAF50;
-		}
-
-		.total-counter {
-			color: #2196F3;
-		}
-        .account-value {
-			font-size: 24px;
-			font-weight: bold;
-			margin: 20px 0;
-			text-align: center;
-			color: #000000;
-			text-shadow: 0 0 5px rgba(0,0,0,0.5);
-			background-color: rgba(233, 233, 233, 1);
-			padding: 10px;
-			border-radius: 10px;
-			display: inline-block;
-		}
-		
-        .card-group {
-            position: relative;
-            width: 150px;
-            height: 200px;
-            margin: 5px;
-        }
-        
-		.card-count {
-			position: absolute;
-			top: 0;
-			left: 0;
-			transform: translate(-25%, +35%); /* Сдвигаем элемент немного вверх и влево */
-			background-color: rgba(0, 0, 0, 0.7);
-			color: white;
-			width: 2px;          /* Фиксированная ширина */
-			height: 24px;         /* Фиксированная высота (равная ширине) */
-			border-radius: 100%;   /* Делает элемент круглым */
-			font-size: 14px;
-			z-index: 2;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			padding: 0;
-			box-sizing: border-box; /* Учитываем padding и border в общей ширине/высоте */
-		}
-        
-        .stacked-card {
-            position: absolute;
-            width: 150px;
-            height: 200px;
-            border-radius: 8px;
-            padding: 10px;
-            box-sizing: border-box;
-            color: white;
-            font-weight: bold;
-            text-shadow: 1px 1px 1px black;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            transition: transform 0.3s;
-        }
-        
-        .stacked-card:hover {
-            transform: scale(1.05) translateY(-5px);
-            z-index: 3;
-        }
-        
-        .stacked-card .card-name {
-            font-size: 36px;
-            margin-bottom: 5px;
-            font-weight: 900;
-        }
-        
-        .stacked-card .card-rarity {
-            font-size: 14px;
-            margin-bottom: 3px;
-        }
-        
-        .stacked-card .card-chance {
-            font-size: 12px;
-        }
-        
-        /* Стили для разных позиций в стопке */
-        .stacked-card.pos-0 { transform: rotate(-2deg); z-index: 1; }
-        .stacked-card.pos-1 { transform: rotate(1deg) translateY(-3px); z-index: 2; }
-        .stacked-card.pos-2 { transform: rotate(3deg) translateY(-6px); z-index: 3; }
-        
-        /* Стили для разделения по мутациям */
-        .mutation-section {
-            margin-top: 20px;
-            width: 100%;
-        }
-        
-        .mutation-section h3 {
-            text-align: center;
-            background-color: #e9e9e9;
-            padding: 5px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-        
-        .normal-cards .stacked-card {
-            border: 2px solid #333;
-        }
-        
-        .shiny-cards .stacked-card {
-            border: 2px solid #ffffff;
-        }
-        
-        .golden-cards .stacked-card {
-            border: 2px solid gold;
-        }
-        
-        .ultra-legendary-cards .stacked-card {
-            animation: rainbow-border 3s infinite linear;
-        }
-        
-        /* Остальные стили остаются без изменений */
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #f0f0f0;
             margin: 0;
             padding: 20px;
+        }
+        
+        .account-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #000000;
+            background-color: rgba(233, 233, 233, 1);
+            padding: 10px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        
+        /* Стили для рангов коллекционера */
+        .account-rank {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            background-color: #e9e9e9;
+            transition: all 0.3s;
+        }
+        
+        /* Цвета для разных рангов */
+        .rank-beginner { color: #666666; }
+        .rank-experienced { color: #2e7d32; }
+        .rank-professional { color: #1565c0; }
+        .rank-master { color: #6a1b9a; }
+        .rank-a { color: #d32f2f; }
+        .rank-s { color: #ff9800; }
+        .rank-ss { color: #ff5722; }
+        .rank-sss { color: #c2185b; }
+        .rank-legendary { 
+            color: white; 
+            background: linear-gradient(90deg, #4a148c, #e91e63); 
+            box-shadow: 0 0 10px rgba(233, 30, 99, 0.7);
+        }
+        
+        .player-counters {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .player-counter {
+            background-color: rgba(233, 233, 233, 1);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .online-counter { color: #4CAF50; }
+        .total-counter { color: #2196F3; }
+        
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 10px 20px;
+        }
+        
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        button:hover:not(:disabled) {
+            background-color: #45a049;
+        }
+        
+        .reset-btn {
+            background-color: #f44336;
+        }
+        
+        .reset-btn:hover {
+            background-color: #d32f2f;
+        }
+        
+        .cooldown {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            z-index: 10;
+            display: none;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .card {
+            width: 300px;
+            height: 400px;
+            border-radius: 15px;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px black;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .card-front {
+            background-color: #333;
+        }
+        
+        .card-back {
+            background-color: inherit;
+            transform: rotateY(180deg);
+        }
+        
+        .card-name {
+            font-size: 48px;
+            margin-bottom: 10px;
+            font-weight: 900;
+        }
+        
+        .card-rarity {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .card-chance {
+            font-size: 16px;
+        }
+        
+        .mutation-label {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        .shiny-label { color: white; }
+        .golden-label { color: gold; }
+        .void-label {
+            color: #fff;
+            background-color: #000;
         }
         
         .main-container {
@@ -162,15 +209,147 @@
             width: 100%;
         }
         
-        .sidebar {
+        .left-column {
             width: 250px;
+            margin-right: 20px;
+        }
+        
+        .right-column {
+            width: 250px;
+            margin-left: 20px;
+        }
+        
+        .chat-container {
             background-color: #fff;
             border-radius: 10px;
             padding: 15px;
-            margin-right: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .trade-container {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .trade-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 18px;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .trade-offers {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        
+        .trade-offer {
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .trade-offer:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .trade-create {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .trade-select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .trade-button {
+            padding: 8px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .trade-button:hover {
+            background-color: #45a049;
+        }
+        
+        .chat-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 18px;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column-reverse;
+            padding: 5px;
+        }
+        
+        .message {
+            margin-bottom: 8px;
+            padding: 5px 8px;
+            border-radius: 5px;
+            background-color: #f1f1f1;
+            word-break: break-word;
+            font-size: 13px;
+            line-height: 1.3;
+        }
+        
+        .golden-message {
+            color: goldenrod;
+            font-weight: bold;
+        }
+        
+        .ultra-legendary-message {
+            animation: rainbow-text 3s infinite linear;
+            font-weight: bold;
+        }
+        
+        @keyframes rainbow-text {
+            0% { color: red; }
+            14% { color: orange; }
+            28% { color: yellow; }
+            42% { color: green; }
+            56% { color: blue; }
+            70% { color: indigo; }
+            84% { color: violet; }
+            100% { color: red; }
+        }
+        
+        .sidebar {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 15px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             align-self: flex-start;
-            max-height: 80vh;
+            max-height: 60vh;
             overflow-y: auto;
         }
         
@@ -243,109 +422,6 @@
             flex-grow: 1;
         }
         
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-bottom: 20px;
-        }
-        
-        button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-        
-        button:hover:not(:disabled) {
-            background-color: #45a049;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .modal-content {
-            position: relative;
-            perspective: 1000px;
-            width: 300px;
-            margin: 0 auto;
-        }
-        
-        .card {
-            width: 300px;
-            height: 400px;
-            border-radius: 15px;
-            padding: 20px;
-            box-sizing: border-box;
-            position: relative;
-            color: white;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px black;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transform-style: preserve-3d;
-            transition: transform 0.6s;
-            backface-visibility: hidden;
-            margin: 0 auto;
-        }
-        
-        .card-front, .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border-radius: 15px;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        
-        .card-front {
-            background-color: #333;
-            transform: rotateY(0deg);
-        }
-        
-        .card-back {
-            background-color: inherit;
-            transform: rotateY(180deg);
-        }
-        
-        .card.flipped {
-            transform: rotateY(180deg);
-        }
-        
-        .card-name {
-            font-size: 48px;
-            margin-bottom: 10px;
-            font-weight: 900;
-        }
-        
-        .card-rarity {
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
-        
-        .card-chance {
-            font-size: 16px;
-        }
-        
         .collection-container {
             max-width: 900px;
             margin: 30px auto 0;
@@ -359,7 +435,32 @@
             gap: 15px;
         }
         
-        .collection-card {
+        .card-group {
+            position: relative;
+            width: 150px;
+            height: 200px;
+            margin: 5px;
+        }
+        
+        .card-count {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: translate(-25%, 35%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 14px;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .stacked-card {
+            position: absolute;
             width: 150px;
             height: 200px;
             border-radius: 8px;
@@ -377,57 +478,69 @@
             transition: transform 0.3s;
         }
         
-        .collection-card:hover {
-            transform: scale(1.05);
+        .stacked-card:hover {
+            transform: scale(1.05) translateY(-5px);
+            z-index: 3;
         }
         
-        .collection-card .card-name {
+        .stacked-card .card-name {
             font-size: 36px;
             margin-bottom: 5px;
             font-weight: 900;
         }
         
-        .collection-card .card-rarity {
+        .stacked-card .card-rarity {
             font-size: 14px;
             margin-bottom: 3px;
         }
         
-        .collection-card .card-chance {
+        .stacked-card .card-chance {
             font-size: 12px;
         }
         
-        .cooldown {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 14px;
-            z-index: 10;
+        .stacked-card.pos-0 { transform: rotate(-2deg); z-index: 1; }
+        .stacked-card.pos-1 { transform: rotate(1deg) translateY(-3px); z-index: 2; }
+        .stacked-card.pos-2 { transform: rotate(3deg) translateY(-6px); z-index: 3; }
+        
+        .mutation-section {
+            margin-top: 20px;
+            width: 100%;
         }
         
-        .reset-btn {
-            background-color: #f44336;
-            margin-left: 10px;
+        .mutation-section h3 {
+            text-align: center;
+            background-color: #e9e9e9;
+            padding: 5px;
+            border-radius: 5px;
+            margin-bottom: 10px;
         }
         
-        .reset-btn:hover {
-            background-color: #d32f2f;
-        }
+        .normal-cards .stacked-card { border: 2px solid #333; }
+        .shiny-cards .stacked-card { border: 2px solid #ffffff; }
+        .golden-cards .stacked-card { border: 2px solid gold; }
+        .ultra-legendary-cards .stacked-card { animation: rainbow-border 3s infinite linear; }
         
         .rarity-info {
-            margin-top: 20px;
+            margin: 20px auto;
             padding: 10px;
             background-color: #e9e9e9;
             border-radius: 5px;
             max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
         }
         
-        /* Новые стили для мультикарточек */
+        .big-pack-modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 900px;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 15px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
         .multi-card-container {
             display: flex;
             flex-wrap: wrap;
@@ -510,20 +623,6 @@
             font-size: 24px;
         }
         
-        .big-pack-modal-content {
-            position: relative;
-            width: 90%;
-            max-width: 900px;
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 15px;
-            max-height: 90vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* Стили для прокрутки */
         .scroll-indicator {
             position: absolute;
             bottom: 10px;
@@ -562,6 +661,11 @@
             animation: rainbow-border 3s infinite linear;
         }
         
+        .void {
+            border: 5px solid #000;
+            box-shadow: 0 0 20px #000, inset 0 0 10px #666;
+        }
+        
         @keyframes rainbow-border {
             0% { box-shadow: 0 0 20px red; border: 5px solid red; }
             14% { box-shadow: 0 0 20px orange; border: 5px solid orange; }
@@ -573,41 +677,6 @@
             100% { box-shadow: 0 0 20px red; border: 5px solid red; }
         }
         
-        .mutation-label {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 12px;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 2px 8px;
-            border-radius: 10px;
-        }
-        
-        .shiny-label {
-            color: white;
-        }
-        
-        .golden-label {
-            color: gold;
-        }
-        
-        .ultra-legendary-label {
-            animation: rainbow-text 3s infinite linear;
-        }
-        
-        @keyframes rainbow-text {
-            0% { color: red; }
-            14% { color: orange; }
-            28% { color: yellow; }
-            42% { color: green; }
-            56% { color: blue; }
-            70% { color: indigo; }
-            84% { color: violet; }
-            100% { color: red; }
-        }
-        
-        /* Стили для мутаций в сайдбаре */
         .shiny-preview {
             border: 2px solid white;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
@@ -622,6 +691,11 @@
             animation: rainbow-border-small 3s infinite linear;
         }
         
+        .void-preview {
+            border: 2px solid #000;
+            box-shadow: 0 0 10px #000, inset 0 0 5px #666;
+        }
+        
         @keyframes rainbow-border-small {
             0% { box-shadow: 0 0 5px red; border: 2px solid red; }
             14% { box-shadow: 0 0 5px orange; border: 2px solid orange; }
@@ -632,20 +706,97 @@
             84% { box-shadow: 0 0 5px violet; border: 2px solid violet; }
             100% { box-shadow: 0 0 5px red; border: 2px solid red; }
         }
+
+        /* Стили для формы входа */
+        .login-modal {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .login-form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+        }
+        
+        .login-form h2 {
+            margin-top: 0;
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .login-form button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .login-form button:hover {
+            background-color: #45a049;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1001;
+            display: none;
+        }
     </style>
 </head>
 <body>
+    <div id="loginModal" class="login-modal">
+        <div class="login-form">
+            <h2>Вход в игру</h2>
+            <p>Пожалуйста, введите ваше имя для игры</p>
+            <input type="text" id="playerNameInput" placeholder="Ваше имя" maxlength="20">
+            <button id="loginButton">Войти</button>
+        </div>
+    </div>
+    
+    <div id="notification" class="notification"></div>
+    
     <h1>Коллекционные карточки</h1>
-	<div class="account-value">Ценность аккаунта: <span id="accountValue">0</span></div>
-	<div class="player-counters">
-    <div class="player-counter online-counter">Игроков онлайн: <span id="onlinePlayers">0</span></div>
-    <div class="player-counter total-counter">Всего посетителей: <span id="totalPlayers">0</span></div>
-	</div>
+    <div class="account-value">Ценность аккаунта: <span id="accountValue">0</span></div>
+    <div id="accountRank" class="account-rank rank-beginner">начинающий коллекционер</div>
+    <div class="player-counters">
+        <div class="player-counter online-counter">Игроков онлайн: <span id="onlinePlayers">0</span></div>
+        <div class="player-counter total-counter">Всего посетителей: <span id="totalPlayers">0</span></div>
+    </div>
+    
     <div>
         <button id="buyPack">Купить обычный пак (1 карта)</button>
         <button id="buyBigPack">Купить большой пак (5-7 карт)</button>
         <button id="resetCollection" class="reset-btn">Сбросить коллекцию</button>
     </div>
+    
     <div id="cooldown" class="cooldown" style="display: none;"></div>
     
     <div class="rarity-info">
@@ -655,14 +806,19 @@
         <div>Блестящая: 10% шанс (карта переливается)</div>
         <div>Золотая: 1.25% шанс (золотая обводка)</div>
         <div>Ультралегендарная: 0.1% шанс (радужная обводка)</div>
+        <div>Пустотная: 0.0125% шанс (чёрное свечение, нельзя обменивать)</div>
     </div>
     
     <div class="main-container">
-        <!-- Новая левая колонка -->
-        <div class="sidebar">
-            <div class="sidebar-title">Ваша коллекция</div>
-            <div id="sidebarCardList" class="card-list">
-                <!-- Здесь будут карточки в списке -->
+        <div class="left-column">
+            <div class="chat-container">
+                <div class="chat-header">Чат игры</div>
+                <div id="chatMessages" class="chat-messages"></div>
+            </div>
+            
+            <div class="sidebar">
+                <div class="sidebar-title">Ваша коллекция</div>
+                <div id="sidebarCardList" class="card-list"></div>
             </div>
         </div>
         
@@ -692,7 +848,6 @@
             <h2>Ваша коллекция</h2>
             <div class="collection-container">
                 <div id="collection" class="collection">
-                    <!-- Здесь будут разделы для разных типов карт -->
                     <div class="mutation-section ultra-legendary-cards">
                         <h3>Ультралегендарные карты</h3>
                         <div id="ultraLegendaryCards" class="collection"></div>
@@ -712,8 +867,24 @@
                 </div>
             </div>
         </div>
+        
+        <div class="right-column">
+            <div class="trade-container">
+                <div class="trade-header">Обмен картами</div>
+                <div id="tradeOffers" class="trade-offers"></div>
+                <div class="trade-create">
+                    <select id="giveCardSelect" class="trade-select">
+                        <option value="">-- Отдаю --</option>
+                    </select>
+                    <select id="getCardSelect" class="trade-select">
+                        <option value="">-- Получаю --</option>
+                    </select>
+                    <button id="createTrade" class="trade-button">Создать обмен</button>
+                </div>
+            </div>
+        </div>
     </div>
-    
+
     <script>
         // Правильный порядок карточек от H (самой частой) до SSS (самой редкой)
         const cardTypes = [
@@ -750,145 +921,222 @@
         const bigPackModal = document.getElementById('bigPackModal');
         const newCard = document.getElementById('newCard');
         const multiCardContainer = document.getElementById('multiCardContainer');
-        const collectionContainer = document.getElementById('collection');
         const cooldownElement = document.getElementById('cooldown');
         const rarityChancesElement = document.getElementById('rarityChances');
-        const scrollIndicator = document.querySelector('.scroll-indicator');
+        const accountValueElement = document.getElementById('accountValue');
+        const accountRankElement = document.getElementById('accountRank');
+        const onlinePlayersElement = document.getElementById('onlinePlayers');
+        const totalPlayersElement = document.getElementById('totalPlayers');
         const sidebarCardList = document.getElementById('sidebarCardList');
-		const accountValueElement = document.getElementById('accountValue');
-		// Добавляем новые элементы для счетчиков
-		const onlinePlayersElement = document.getElementById('onlinePlayers');
-		const totalPlayersElement = document.getElementById('totalPlayers');
+        const chatMessages = document.getElementById('chatMessages');
+        const tradeOffers = document.getElementById('tradeOffers');
+        const giveCardSelect = document.getElementById('giveCardSelect');
+        const getCardSelect = document.getElementById('getCardSelect');
+        const createTradeBtn = document.getElementById('createTrade');
+        const loginModal = document.getElementById('loginModal');
+        const playerNameInput = document.getElementById('playerNameInput');
+        const loginButton = document.getElementById('loginButton');
+        const notificationElement = document.getElementById('notification');
 
-		// Функция для обновления счетчиков игроков
-		function updatePlayerCounters() {
-			// Получаем данные из localStorage или устанавливаем значения по умолчанию
-			let playerStats = JSON.parse(localStorage.getItem('playerStats')) || {
-				total: 0,
-				online: 0,
-				lastSession: null
-			};
-    
-			// Проверяем, новый ли это посетитель
-			const isNewVisitor = !playerStats.lastSession || 
-                         (Date.now() - playerStats.lastSession) > 30 * 60 * 1000; // 30 минут
-    
-			if (isNewVisitor) {
-				playerStats.total += 1;
-			}
-			
-			// Обновляем онлайн-статистику
-			playerStats.online += 1;
-			playerStats.lastSession = Date.now();
-		
-			// Сохраняем обновленные данные
-			localStorage.setItem('playerStats', JSON.stringify(playerStats));
-    
-			// Обновляем отображение
-			onlinePlayersElement.textContent = playerStats.online;
-			totalPlayersElement.textContent = playerStats.total;
-			
-			// Периодически обновляем счетчик онлайн (каждые 5 минут)
-			setTimeout(updateOnlineCounter, 5 * 60 * 1000);
-}
-
-		// Функция для обновления только счетчика онлайн
-		function updateOnlineCounter() {
-			let playerStats = JSON.parse(localStorage.getItem('playerStats')) || {
-				total: 0,
-				online: 0,
-				lastSession: null
-			};
-    
-			// Уменьшаем счетчик онлайн, если сессия устарела (более 5 минут)
-			if (playerStats.lastSession && (Date.now() - playerStats.lastSession) > 5 * 60 * 1000) {
-				playerStats.online = Math.max(0, playerStats.online - 1);
-				localStorage.setItem('playerStats', JSON.stringify(playerStats));
-			}
-    
-			onlinePlayersElement.textContent = playerStats.online;
-    
-			// Продолжаем периодическое обновление
-			setTimeout(updateOnlineCounter, 5 * 60 * 1000);
-}
-
-		// Инициализация счетчиков при загрузке страницы
-		window.addEventListener('load', function() {
-			updatePlayerCounters();
-    
-			// Также обновляем счетчики при возвращении на страницу (например, из другой вкладки)
-			document.addEventListener('visibilitychange', function() {
-				if (!document.hidden) {
-					updatePlayerCounters();
-				}
-			});
-		});
-        
-        // Элементы для разделов коллекции
+        // Элементы коллекции
         const ultraLegendaryCardsSection = document.getElementById('ultraLegendaryCards');
         const goldenCardsSection = document.getElementById('goldenCards');
         const shinyCardsSection = document.getElementById('shinyCards');
         const normalCardsSection = document.getElementById('normalCards');
-        
-        // Показываем шансы выпадения (от самых частых к самым редким)
-        rarityChancesElement.innerHTML = cardTypes.map(card => 
-            `<div><strong>${card.name}</strong> (${card.rarity}): ${card.chance}</div>`
-        ).join('');
-        
-        // Коллекция пользователя
+
+        // Глобальные переменные
         let userCollection = loadCollection();
         let isCooldown = false;
-        const COOLDOWN_TIME = 3000; // 3 секунды кулдауна для обычного пака
-        const BIG_PACK_COOLDOWN = 5000; // 5 секунд кулдауна для большого пака
-        
-        // Загрузка коллекции при старте
-        updateCollection();
-		updateAccountValue();
-        
-		// Функция для расчета ценности аккаунта
-		function calculateAccountValue() {
-			let totalValue = 0;
-    
-			// Создаем объект с ценностями для каждой редкости
-			const rarityValues = {
-				'H': 0.1,
-				'F': 1,
-				'E': 5,
-				'D': 15,
-				'C': 50,
-				'B': 150,
-				'A': 400,
-				'A+': 600,
-				'S+': 1000,
-				'S++': 1500,
-				'S+++': 2000,
-				'SS': 2500,
-				'SS+': 3000,
-				'SSS': 3333
-			};
-    
-			// Рассчитываем общую ценность
-			userCollection.forEach(card => {
-				const cardValue = rarityValues[card.name] || 0;
-				let multiplier = 1;
-				
-				// Учитываем мутации
-				if (card.mutation === "shiny") multiplier = 1.5;
-				else if (card.mutation === "golden") multiplier = 3;
-				else if (card.mutation === "ultra-legendary") multiplier = 10;
-				
-				totalValue += cardValue * multiplier;
-			});
-			
-			return Math.round(totalValue * 10) / 10; // Округляем до 1 знака после запятой
-		}
-		
-		// Обновляем отображение ценности аккаунта
-		function updateAccountValue() {
-			const value = calculateAccountValue();
-			accountValueElement.textContent = value;
-		}
-		
+        const COOLDOWN_TIME = 3000;
+        const BIG_PACK_COOLDOWN = 5000;
+        let playerName = localStorage.getItem('playerName') || '';
+        let socket = null;
+        let trades = [];
+        let onlinePlayers = 0;
+
+        // Функция для определения ранга коллекционера
+        function getAccountRank(value) {
+            if (value >= 30000) return { name: "Накредитации коллекционер", class: "rank-legendary" };
+            if (value >= 20000) return { name: "коллекционер ранга SSS", class: "rank-sss" };
+            if (value >= 10000) return { name: "коллекционер ранга SS", class: "rank-ss" };
+            if (value >= 5000) return { name: "коллекционер ранга S", class: "rank-s" };
+            if (value >= 3000) return { name: "коллекционер ранга A", class: "rank-a" };
+            if (value >= 1000) return { name: "мастер коллекционер", class: "rank-master" };
+            if (value >= 701) return { name: "профессиональный коллекционер", class: "rank-professional" };
+            if (value >= 301) return { name: "опытный коллекционер", class: "rank-experienced" };
+            return { name: "начинающий коллекционер", class: "rank-beginner" };
+        }
+
+        // Инициализация WebSocket
+        function initWebSocket() {
+            // В реальном приложении здесь должен быть адрес вашего WebSocket сервера
+            const wsUrl = 'wss://your-websocket-server.com/ws';
+            
+            // Для демонстрации используем эмуляцию WebSocket
+            socket = {
+                send: (data) => {
+                    console.log('WebSocket send:', data);
+                    // В реальном приложении здесь будет отправка данных на сервер
+                    // socket.send(data);
+                    
+                    // Эмуляция ответа от сервера
+                    setTimeout(() => {
+                        const message = JSON.parse(data);
+                        
+                        if (message.type === 'create_trade') {
+                            // Эмулируем создание трейда
+                            const newTrade = {
+                                id: Date.now(),
+                                player: playerName,
+                                giveCard: message.giveCard,
+                                getCard: message.getCard
+                            };
+                            
+                            trades.push(newTrade);
+                            updateTrades();
+                            
+                            // Эмулируем уведомление другим игрокам
+                            const tradeMessage = {
+                                type: 'new_trade',
+                                trade: newTrade
+                            };
+                            handleWebSocketMessage({ data: JSON.stringify(tradeMessage) });
+                        } else if (message.type === 'accept_trade') {
+                            // Эмулируем принятие трейда
+                            const tradeIndex = trades.findIndex(t => t.id === message.tradeId);
+                            if (tradeIndex !== -1) {
+                                const trade = trades[tradeIndex];
+                                
+                                // Удаляем трейд из списка
+                                trades.splice(tradeIndex, 1);
+                                updateTrades();
+                                
+                                // Эмулируем уведомление другим игрокам
+                                const tradeMessage = {
+                                    type: 'trade_accepted',
+                                    tradeId: message.tradeId,
+                                    acceptor: playerName
+                                };
+                                handleWebSocketMessage({ data: JSON.stringify(tradeMessage) });
+                            }
+                        }
+                    }, 500);
+                },
+                close: () => console.log('WebSocket closed')
+            };
+            
+            // В реальном приложении здесь будут обработчики событий WebSocket
+             socket.onopen = () => {
+                   console.log('WebSocket connected');
+                   sendPlayerInfo();
+                   updateTrades();
+             };
+             
+             socket.onmessage = handleWebSocketMessage;
+             
+             socket.onclose = () => {
+                 console.log('WebSocket disconnected');
+                 setTimeout(initWebSocket, 5000);
+             };
+            
+            // Для демонстрации сразу "подключаемся"
+            setTimeout(() => {
+                sendPlayerInfo();
+                updateTrades();
+            }, 500);
+        }
+
+        // Обработчик сообщений WebSocket
+        function handleWebSocketMessage(event) {
+            const message = JSON.parse(event.data);
+            
+            switch (message.type) {
+                case 'player_count':
+                    onlinePlayers = message.count;
+                    onlinePlayersElement.textContent = onlinePlayers;
+                    break;
+                    
+                case 'new_trade':
+                    // Добавляем новый трейд в список
+                    if (message.trade.player !== playerName) { // Игрок не может видеть свои трейды в общем списке
+                        trades.push(message.trade);
+                        updateTrades();
+                        showNotification(`Новый трейд: ${message.trade.player} предлагает ${formatCardText(message.trade.getCard)} за ${formatCardText(message.trade.giveCard)}`);
+                    }
+                    break;
+                    
+                case 'trade_accepted':
+                    // Удаляем принятый трейд из списка
+                    trades = trades.filter(t => t.id !== message.tradeId);
+                    updateTrades();
+                    
+                    if (message.acceptor === playerName) {
+                        showNotification('Вы приняли трейд!');
+                    } else {
+                        showNotification(`Трейд принял игрок ${message.acceptor}`);
+                    }
+                    break;
+                    
+                case 'chat_message':
+                    // Добавляем сообщение в чат
+                    addChatMessage(`${message.player}: ${message.text}`, null, message.mutation);
+                    break;
+                    
+                default:
+                    console.log('Unknown message type:', message.type);
+            }
+        }
+
+        // Отправка информации об игроке на сервер
+        function sendPlayerInfo() {
+            if (!socket || !playerName) return;
+            
+            const message = {
+                type: 'player_info',
+                name: playerName,
+                collection: userCollection
+            };
+            
+            socket.send(JSON.stringify(message));
+        }
+
+        // Показ уведомления
+        function showNotification(text) {
+            notificationElement.textContent = text;
+            notificationElement.style.display = 'block';
+            
+            setTimeout(() => {
+                notificationElement.style.display = 'none';
+            }, 3000);
+        }
+
+        // Функция для добавления сообщения в чат
+        function addChatMessage(text, cardColor, mutation) {
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message';
+            messageElement.textContent = text;
+            
+            // Устанавливаем цвет в зависимости от типа карты/мутации
+            if (mutation === "golden") {
+                messageElement.classList.add('golden-message');
+            } else if (mutation === "void") {
+                messageElement.style.color = "#000";
+                messageElement.style.textShadow = "0 0 3px #fff";
+            } else if (cardColor) {
+                messageElement.style.color = cardColor;
+            }
+            
+            chatMessages.insertBefore(messageElement, chatMessages.firstChild);
+            
+            // Автопрокрутка к новому сообщению
+            chatMessages.scrollTop = 0;
+            
+            // Ограничиваем количество сообщений в чате
+            while (chatMessages.children.length > 100) {
+                chatMessages.removeChild(chatMessages.lastChild);
+            }
+        }
+
         // Функция для получения случайной карты
         function getRandomCard() {
             const randomValue = Math.random() * totalWeight;
@@ -907,7 +1155,9 @@
             let mutation = null;
             const mutationRoll = Math.random() * 100;
             
-            if (mutationRoll < 0.1) { // 0.1% шанс
+            if (mutationRoll < 0.0125) { // 0.0125% шанс
+                mutation = "void";
+            } else if (mutationRoll < 0.1) { // 0.1% шанс (0.1 - 0.0125)
                 mutation = "ultra-legendary";
             } else if (mutationRoll < 1.35) { // 1.25% шанс (1.35 - 0.1)
                 mutation = "golden";
@@ -927,30 +1177,481 @@
             if (!mutation) return;
             
             const backSide = cardElement.querySelector('.card-back, .multi-card-back');
+            const label = cardElement.querySelector('.mutation-label');
             
             if (mutation === "shiny") {
                 backSide.classList.add('shiny');
-                const label = cardElement.querySelector('.mutation-label');
                 if (label) {
                     label.textContent = "Блестящая";
                     label.classList.add('shiny-label');
                 }
             } else if (mutation === "golden") {
                 backSide.classList.add('golden');
-                const label = cardElement.querySelector('.mutation-label');
                 if (label) {
                     label.textContent = "Золотая";
                     label.classList.add('golden-label');
                 }
             } else if (mutation === "ultra-legendary") {
                 backSide.classList.add('ultra-legendary');
-                const label = cardElement.querySelector('.mutation-label');
                 if (label) {
                     label.textContent = "Ультралегендарная";
                     label.classList.add('ultra-legendary-label');
                 }
+            } else if (mutation === "void") {
+                backSide.classList.add('void');
+                if (label) {
+                    label.textContent = "Пустотная";
+                    label.classList.add('void-label');
+                }
             }
         }
+        
+        // Функция для расчета ценности аккаунта
+        function calculateAccountValue() {
+            const rarityValues = {
+                'H': 0.1,
+                'F': 1,
+                'E': 5,
+                'D': 15,
+                'C': 50,
+                'B': 150,
+                'A': 400,
+                'A+': 600,
+                'S+': 1000,
+                'S++': 1500,
+                'S+++': 2000,
+                'S': 2500,
+                'SS+': 3000,
+                'SSS': 3333
+            };
+            
+            let totalValue = 0;
+            
+            userCollection.forEach(card => {
+                const cardValue = rarityValues[card.name] || 0;
+                let multiplier = 1;
+                
+                // Учитываем мутации
+                if (card.mutation === "shiny") multiplier = 1.5;
+                else if (card.mutation === "golden") multiplier = 3;
+                else if (card.mutation === "ultra-legendary") multiplier = 10;
+                else if (card.mutation === "void") multiplier = 50;
+                
+                totalValue += cardValue * multiplier;
+            });
+            
+            return Math.round(totalValue * 10) / 10; // Округляем до 1 знака после запятой
+        }
+        
+        // Обновляем отображение ценности аккаунта и ранга
+        function updateAccountValue() {
+            const value = calculateAccountValue();
+            accountValueElement.textContent = value;
+            
+            // Обновляем ранг
+            const rank = getAccountRank(value);
+            accountRankElement.textContent = rank.name;
+            accountRankElement.className = `account-rank ${rank.class}`;
+        }
+        
+        // Обновление счетчиков игроков
+        function updatePlayerCounters() {
+            let playerStats = JSON.parse(localStorage.getItem('playerStats')) || {
+                total: 0,
+                online: 0,
+                lastSession: null
+            };
+            
+            const isNewVisitor = !playerStats.lastSession || 
+                         (Date.now() - playerStats.lastSession) > 30 * 60 * 1000; // 30 минут
+            
+            if (isNewVisitor) {
+                playerStats.total += 1;
+            }
+            
+            playerStats.online = onlinePlayers;
+            playerStats.lastSession = Date.now();
+            
+            localStorage.setItem('playerStats', JSON.stringify(playerStats));
+            
+            onlinePlayersElement.textContent = playerStats.online;
+            totalPlayersElement.textContent = playerStats.total;
+        }
+        
+        // Кулдаун на открытие карточек
+        function startCooldown(time) {
+            isCooldown = true;
+            buyPackBtn.disabled = true;
+            buyBigPackBtn.disabled = true;
+            let timeLeft = time / 1000;
+            
+            cooldownElement.style.display = 'block';
+            cooldownElement.textContent = `Подождите ${timeLeft} сек`;
+            
+            const interval = setInterval(() => {
+                timeLeft--;
+                cooldownElement.textContent = `Подождите ${timeLeft} сек`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(interval);
+                    isCooldown = false;
+                    buyPackBtn.disabled = false;
+                    buyBigPackBtn.disabled = false;
+                    cooldownElement.style.display = 'none';
+                }
+            }, 1000);
+        }
+        
+        // Сохранение коллекции
+        function saveCollection() {
+            localStorage.setItem('cardCollection', JSON.stringify(userCollection));
+            sendPlayerInfo(); // Обновляем информацию о коллекции на сервере
+        }
+        
+        // Загрузка коллекции
+        function loadCollection() {
+            const savedCollection = localStorage.getItem('cardCollection');
+            return savedCollection ? JSON.parse(savedCollection) : [];
+        }
+        
+        // Обновление информации о редкостях
+        function updateRarityInfo() {
+            rarityChancesElement.innerHTML = cardTypes.map(card => 
+                `<div><strong>${card.name}</strong> (${card.rarity}): ${card.chance}</div>`
+            ).join('');
+        }
+        
+        // Обновление отображения коллекции
+        function updateCollection() {
+            // Очищаем все разделы коллекции
+            ultraLegendaryCardsSection.innerHTML = '';
+            goldenCardsSection.innerHTML = '';
+            shinyCardsSection.innerHTML = '';
+            normalCardsSection.innerHTML = '';
+            sidebarCardList.innerHTML = '';
+            
+            // Группируем карты по типу и мутации
+            const groupedCards = {};
+            
+            userCollection.forEach(card => {
+                const key = `${card.name}-${card.mutation || 'normal'}`;
+                if (!groupedCards[key]) {
+                    groupedCards[key] = {
+                        card: card,
+                        count: 0
+                    };
+                }
+                groupedCards[key].count++;
+            });
+            
+            // Преобразуем объект в массив и сортируем
+            const sortedGroups = Object.values(groupedCards).sort((a, b) => {
+                const aIndex = cardTypes.findIndex(c => c.name === a.card.name);
+                const bIndex = cardTypes.findIndex(c => c.name === b.card.name);
+                return bIndex - aIndex; // Сортировка от SSS к H
+            });
+            
+            // Добавляем карты в сайдбар
+            sortedGroups.forEach(group => {
+                const card = group.card;
+                const count = group.count;
+                
+                // Создаем элемент для сайдбара
+                const listItem = document.createElement('div');
+                listItem.className = 'card-list-item';
+                
+                // Создаем превью карты
+                const preview = document.createElement('div');
+                preview.className = 'card-preview';
+                preview.style.backgroundColor = card.color;
+                // Применяем стили мутации для превью
+                if (card.mutation === "shiny") {
+                    preview.classList.add('shiny-preview');
+                } else if (card.mutation === "golden") {
+                    preview.classList.add('golden-preview');
+                } else if (card.mutation === "ultra-legendary") {
+                    preview.classList.add('ultra-legendary-preview');
+                } else if (card.mutation === "void") {
+                    preview.classList.add('void-preview');
+                }
+                
+                preview.textContent = card.name;
+                
+                // Создаем блок с информацией о карте
+                const info = document.createElement('div');
+                info.className = 'card-info';
+                
+                const name = document.createElement('div');
+                name.className = 'card-name-small';
+                name.textContent = card.rarity;
+                
+                const rarity = document.createElement('div');
+                rarity.className = 'card-rarity-small';
+                rarity.textContent = card.name;
+                
+                info.appendChild(name);
+                info.appendChild(rarity);
+                
+                // Создаем счетчик карт
+                const counter = document.createElement('div');
+                counter.className = 'card-count';
+                counter.textContent = count;
+                
+                // Собираем элемент списка
+                listItem.appendChild(preview);
+                listItem.appendChild(info);
+                listItem.appendChild(counter);
+                
+                // Добавляем в сайдбар
+                sidebarCardList.appendChild(listItem);
+                
+                // Добавляем карты в соответствующие разделы коллекции
+                const cardGroup = document.createElement('div');
+                cardGroup.className = 'card-group';
+                
+                const countBadge = document.createElement('div');
+                countBadge.className = 'card-count';
+                countBadge.textContent = count;
+                cardGroup.appendChild(countBadge);
+                
+                // Создаем 1-3 карты для визуального отображения в стопке
+                const displayCount = Math.min(count, 3);
+                for (let i = 0; i < displayCount; i++) {
+                    const cardElement = document.createElement('div');
+                    cardElement.className = `stacked-card pos-${i}`;
+                    cardElement.style.backgroundColor = card.color;
+                    cardElement.innerHTML = `
+                        <div class="card-name">${card.name}</div>
+                        <div class="card-rarity">${card.rarity}</div>
+                        <div class="card-chance">${card.chance}</div>
+                    `;
+                    
+                    // Применяем стили мутации
+                    if (card.mutation === "shiny") {
+                        cardElement.classList.add('shiny');
+                    } else if (card.mutation === "golden") {
+                        cardElement.classList.add('golden');
+                    } else if (card.mutation === "ultra-legendary") {
+                        cardElement.classList.add('ultra-legendary');
+                    } else if (card.mutation === "void") {
+                        cardElement.classList.add('void');
+                    }
+                    
+                    cardGroup.appendChild(cardElement);
+                }
+                
+                // Добавляем группу карт в соответствующий раздел коллекции
+                if (card.mutation === "ultra-legendary") {
+                    ultraLegendaryCardsSection.appendChild(cardGroup);
+                } else if (card.mutation === "golden") {
+                    goldenCardsSection.appendChild(cardGroup);
+                } else if (card.mutation === "shiny") {
+                    shinyCardsSection.appendChild(cardGroup);
+                } else {
+                    normalCardsSection.appendChild(cardGroup);
+                }
+            });
+            
+            // Обновляем селекторы для трейдов
+            updateTradeSelects();
+        }
+        
+        // Обновление селекторов для создания трейдов
+        function updateTradeSelects() {
+            // Очищаем селекторы
+            giveCardSelect.innerHTML = '<option value="">-- Отдаю --</option>';
+            getCardSelect.innerHTML = '<option value="">-- Получаю --</option>';
+            
+            // Создаем уникальный список карт в коллекции
+            const uniqueCards = {};
+            userCollection.forEach(card => {
+                const key = `${card.name}-${card.mutation || 'normal'}`;
+                if (!uniqueCards[key]) {
+                    uniqueCards[key] = card;
+                }
+            });
+            
+            // Добавляем карты в селектор "Отдаю" (исключая пустотные)
+            Object.values(uniqueCards).forEach(card => {
+                if (card.mutation === "void") return; // Пропускаем пустотные карты
+                
+                const option = document.createElement('option');
+                option.value = `${card.name}-${card.mutation || 'normal'}`;
+                
+                let displayText = card.name;
+                if (card.mutation === "shiny") displayText += " (Блестящая)";
+                else if (card.mutation === "golden") displayText += " (Золотая)";
+                else if (card.mutation === "ultra-legendary") displayText += " (Ультралегендарная)";
+                else if (card.mutation === "void") displayText += " (Пустотная)";
+                
+                option.textContent = displayText;
+                giveCardSelect.appendChild(option);
+            });
+            
+            // Добавляем все возможные карты в селектор "Получаю"
+            cardTypes.forEach(card => {
+                ['normal', 'shiny', 'golden', 'ultra-legendary'].forEach(mutation => {
+                    const option = document.createElement('option');
+                    option.value = `${card.name}-${mutation}`;
+                    
+                    let displayText = card.name;
+                    if (mutation === "shiny") displayText += " (Блестящая)";
+                    else if (mutation === "golden") displayText += " (Золотая)";
+                    else if (mutation === "ultra-legendary") displayText += " (Ультралегендарная)";
+                    else if (mutation === "void") displayText += " (Пустотная)";
+                    
+                    option.textContent = displayText;
+                    getCardSelect.appendChild(option);
+                });
+            });
+        }
+        
+        // Обновление списка трейдов
+        function updateTrades() {
+            // Очищаем список трейдов
+            tradeOffers.innerHTML = '';
+            
+            // Добавляем трейды в список (исключая трейды текущего игрока)
+            trades.filter(trade => trade.player !== playerName).forEach(trade => {
+                const tradeElement = document.createElement('div');
+                tradeElement.className = 'trade-offer';
+                
+                const giveText = formatCardText(trade.giveCard);
+                const getText = formatCardText(trade.getCard);
+                
+                tradeElement.innerHTML = `
+                    <div><strong>${trade.player}</strong> предлагает:</div>
+                    <div>${getText} ← ${giveText}</div>
+                `;
+                
+                tradeElement.addEventListener('click', () => {
+                    if (confirm(`Вы хотите обменять ${giveText} на ${getText}?`)) {
+                        acceptTrade(trade);
+                    }
+                });
+                
+                tradeOffers.appendChild(tradeElement);
+            });
+        }
+        
+        // Форматирование текста карты для отображения
+        function formatCardText(card) {
+            if (!card) return "Неизвестно";
+            
+            // Находим полные данные карты по имени
+            const cardData = cardTypes.find(c => c.name === card.name) || {};
+            
+            let text = card.name;
+            if (card.mutation === "shiny") text += " (Блестящая)";
+            else if (card.mutation === "golden") text += " (Золотая)";
+            else if (card.mutation === "ultra-legendary") text += " (Ультралегендарная)";
+            else if (card.mutation === "void") text += " (Пустотная)";
+            
+            return text;
+        }
+        
+        // Принятие трейда
+        function acceptTrade(trade) {
+            // Проверяем, есть ли у нас карта для обмена
+            const hasCard = userCollection.some(card => 
+                card.name === trade.giveCard.name && 
+                (card.mutation || 'normal') === (trade.giveCard.mutation || 'normal')
+            );
+            
+            if (!hasCard) {
+                showNotification('У вас нет нужной карты для этого обмена!');
+                return;
+            }
+            
+            // Удаляем карту из коллекции
+            const cardIndex = userCollection.findIndex(card => 
+                card.name === trade.giveCard.name && 
+                (card.mutation || 'normal') === (trade.giveCard.mutation || 'normal')
+            );
+            
+            if (cardIndex !== -1) {
+                userCollection.splice(cardIndex, 1);
+            }
+            
+            // Добавляем новую карту с полными данными
+            const cardType = cardTypes.find(c => c.name === trade.getCard.name) || {};
+            const newCard = {
+                ...cardType,
+                id: Date.now() + Math.floor(Math.random() * 1000),
+                name: trade.getCard.name,
+                mutation: trade.getCard.mutation === 'normal' ? null : trade.getCard.mutation
+            };
+            
+            userCollection.push(newCard);
+            
+            // Обновляем коллекцию
+            saveCollection();
+            updateCollection();
+            updateAccountValue();
+            
+            // Отправляем сообщение на сервер о принятии трейда
+            if (socket) {
+                const message = {
+                    type: 'accept_trade',
+                    tradeId: trade.id
+                };
+                socket.send(JSON.stringify(message));
+            }
+            
+            showNotification(`Вы успешно обменяли ${formatCardText(trade.giveCard)} на ${formatCardText(trade.getCard)}!`);
+        }
+        
+        // Создание нового трейда
+        createTradeBtn.addEventListener('click', function() {
+            const giveValue = giveCardSelect.value;
+            const getValue = getCardSelect.value;
+            
+            if (!giveValue || !getValue) {
+                showNotification('Пожалуйста, выберите карты для обмена!');
+                return;
+            }
+            
+            const [giveName, giveMutation] = giveValue.split('-');
+            const [getName, getMutation] = getValue.split('-');
+            
+            // Проверяем, есть ли у нас карта для обмена
+            const hasCard = userCollection.some(card => 
+                card.name === giveName && 
+                (card.mutation || 'normal') === giveMutation
+            );
+            
+            if (!hasCard) {
+                showNotification('У вас нет выбранной карты для обмена!');
+                return;
+            }
+            
+            // Создаем объект карты для обмена
+            const giveCard = {
+                name: giveName,
+                mutation: giveMutation === 'normal' ? null : giveMutation
+            };
+            
+            const getCard = {
+                name: getName,
+                mutation: getMutation === 'normal' ? null : getMutation
+            };
+            
+            // Отправляем трейд на сервер
+            if (socket) {
+                const message = {
+                    type: 'create_trade',
+                    giveCard: giveCard,
+                    getCard: getCard
+                };
+                socket.send(JSON.stringify(message));
+            }
+            
+            showNotification(`Вы создали предложение обмена: ${formatCardText(giveCard)} на ${formatCardText(getCard)}`);
+            
+            // Очищаем выбор
+            giveCardSelect.value = '';
+            getCardSelect.value = '';
+        });
         
         // Покупка обычного пака (1 карта)
         buyPackBtn.addEventListener('click', function() {
@@ -989,8 +1690,37 @@
                     setTimeout(() => {
                         userCollection.push(card);
                         saveCollection();
-						updateAccountValue();
+                        updateAccountValue();
                         updateCollection();
+                        
+                        // Добавляем сообщение в чат только для определенных карт/мутаций
+                        const isCommonCard = ['H', 'F'].includes(card.name);
+                        const isNormalMutation = !card.mutation || card.mutation === "shiny";
+                        
+                        if (!(isCommonCard && isNormalMutation)) {
+                            let message = `Получена карта ${card.name}`;
+                            if (card.mutation === "shiny") {
+                                message = `Получена блестящая карта ${card.name}!`;
+                            } else if (card.mutation === "golden") {
+                                message = `Получена золотая карта ${card.name}!!`;
+                            } else if (card.mutation === "ultra-legendary") {
+                                message = `Получена УЛЬТРАЛЕГЕНДАРНАЯ карта ${card.name}!!!`;
+                            } else if (card.mutation === "void") {
+                                message = `Получена ПУСТОТНАЯ карта ${card.name}!!!!`;
+                            }
+                            
+                            addChatMessage(message, card.color, card.mutation);
+                            
+                            // Отправляем сообщение в глобальный чат
+                            if (socket) {
+                                const chatMessage = {
+                                    type: 'chat_message',
+                                    text: message,
+                                    mutation: card.mutation
+                                };
+                                socket.send(JSON.stringify(chatMessage));
+                            }
+                        }
                         
                         // Прокручиваем к последней добавленной карте
                         const lastCard = document.querySelector('.card-group:last-child');
@@ -1058,15 +1788,46 @@
             // Добавляем все карты в коллекцию
             userCollection.push(...cards);
             saveCollection();
-			updateAccountValue();
+            updateAccountValue();
+            
+            // Добавляем сообщения в чат о полученных картах (только для определенных карт/мутаций)
+            cards.forEach(card => {
+                const isCommonCard = ['H', 'F'].includes(card.name);
+                const isNormalMutation = !card.mutation || card.mutation === "shiny";
+                
+                if (!(isCommonCard && isNormalMutation)) {
+                    let message = `Получена карта ${card.name}`;
+                    if (card.mutation === "shiny") {
+                        message = `Получена блестящая карта ${card.name}!`;
+                    } else if (card.mutation === "golden") {
+                        message = `Получена золотая карта ${card.name}!!`;
+                    } else if (card.mutation === "ultra-legendary") {
+                        message = `Получена УЛЬТРАЛЕГЕНДАРНАЯ карта ${card.name}!!!`;
+                    } else if (card.mutation === "void") {
+                        message = `Получена ПУСТОТНАЯ карта ${card.name}!!!!`;
+                    }
+                    
+                    addChatMessage(message, card.color, card.mutation);
+                    
+                    // Отправляем сообщение в глобальный чат
+                    if (socket) {
+                        const chatMessage = {
+                            type: 'chat_message',
+                            text: message,
+                            mutation: card.mutation
+                        };
+                        socket.send(JSON.stringify(chatMessage));
+                    }
+                }
+            });
             
             // Обновляем коллекцию и прокручиваем к новым картам
             setTimeout(() => {
                 updateCollection();
                 
                 // Прокручиваем коллекцию к последним добавленным картам
-                collectionContainer.scrollTo({
-                    top: collectionContainer.scrollHeight,
+                collection.scrollTo({
+                    top: collection.scrollHeight,
                     behavior: 'smooth'
                 });
             }, 1000);
@@ -1103,173 +1864,58 @@
             if (confirm("Вы уверены, что хотите сбросить всю коллекцию?")) {
                 userCollection = [];
                 saveCollection();
-				updateAccountValue();
+                updateAccountValue();
                 updateCollection();
             }
         });
         
-        // Кулдаун на открытие карточек
-        function startCooldown(time) {
-            isCooldown = true;
-            buyPackBtn.disabled = true;
-            buyBigPackBtn.disabled = true;
-            let timeLeft = time / 1000;
+        // Обработчик входа в игру
+        function handleLogin() {
+            const name = playerNameInput.value.trim();
             
-            cooldownElement.style.display = 'block';
-            cooldownElement.textContent = `Подождите ${timeLeft} сек`;
+            if (name.length < 3 || name.length > 20) {
+                alert('Имя должно быть от 3 до 20 символов');
+                return;
+            }
             
-            const interval = setInterval(() => {
-                timeLeft--;
-                cooldownElement.textContent = `Подождите ${timeLeft} сек`;
-                
-                if (timeLeft <= 0) {
-                    clearInterval(interval);
-                    isCooldown = false;
-                    buyPackBtn.disabled = false;
-                    buyBigPackBtn.disabled = false;
-                    cooldownElement.style.display = 'none';
-                }
-            }, 1000);
+            playerName = name;
+            localStorage.setItem('playerName', playerName);
+            loginModal.style.display = 'none';
+            
+            // Инициализируем игру
+            initGame();
         }
-        
-        // Сохранение коллекции
-        function saveCollection() {
-            localStorage.setItem('cardCollection', JSON.stringify(userCollection));
+
+        // Инициализация игры после входа
+        function initGame() {
+            updateRarityInfo();
+            updateCollection();
+            updateAccountValue();
+            updatePlayerCounters();
+            updateTradeSelects();
+            
+            // Инициализируем WebSocket соединение
+            initWebSocket();
         }
-        
-        // Загрузка коллекции
-        function loadCollection() {
-            const savedCollection = localStorage.getItem('cardCollection');
-            return savedCollection ? JSON.parse(savedCollection) : [];
-        }
-        
-        // Обновление отображения коллекции
-        function updateCollection() {
-            // Очищаем все разделы коллекции
-            ultraLegendaryCardsSection.innerHTML = '';
-            goldenCardsSection.innerHTML = '';
-            shinyCardsSection.innerHTML = '';
-            normalCardsSection.innerHTML = '';
-            sidebarCardList.innerHTML = '';
+
+        // Инициализация при загрузке страницы
+        window.addEventListener('load', function() {
+            // Если имя игрока уже сохранено, сразу инициализируем игру
+            if (playerName) {
+                loginModal.style.display = 'none';
+                initGame();
+            }
             
-            // Группируем карты по типу и мутации
-            const groupedCards = {};
+            // Добавляем обработчик для кнопки входа
+            document.getElementById('loginButton').addEventListener('click', handleLogin);
             
-            userCollection.forEach(card => {
-                const key = `${card.name}-${card.mutation || 'normal'}`;
-                if (!groupedCards[key]) {
-                    groupedCards[key] = {
-                        card: card,
-                        count: 0
-                    };
-                }
-                groupedCards[key].count++;
-            });
-            
-            // Преобразуем объект в массив и сортируем
-            const sortedGroups = Object.values(groupedCards).sort((a, b) => {
-                const aIndex = cardTypes.findIndex(c => c.name === a.card.name);
-                const bIndex = cardTypes.findIndex(c => c.name === b.card.name);
-                return bIndex - aIndex; // Сортировка от SSS к H
-            });
-            
-            // Добавляем карты в сайдбар
-            sortedGroups.forEach(group => {
-                const card = group.card;
-                const count = group.count;
-                
-                // Создаем элемент для сайдбара
-                const listItem = document.createElement('div');
-                listItem.className = 'card-list-item';
-                
-                // Создаем превью карты
-                const preview = document.createElement('div');
-                preview.className = 'card-preview';
-                preview.style.backgroundColor = card.color
-                // Применяем стили мутации для превью
-                if (card.mutation === "shiny") {
-                    preview.classList.add('shiny-preview');
-                } else if (card.mutation === "golden") {
-                    preview.classList.add('golden-preview');
-                } else if (card.mutation === "ultra-legendary") {
-                    preview.classList.add('ultra-legendary-preview');
-                }
-                
-                preview.textContent = card.name;
-                
-                // Создаем блок с информацией о карте
-                const info = document.createElement('div');
-                info.className = 'card-info';
-                
-                const name = document.createElement('div');
-                name.className = 'card-name-small';
-                name.textContent = card.rarity;
-                
-                const rarity = document.createElement('div');
-                rarity.className = 'card-rarity-small';
-                rarity.textContent = card.name;
-                
-                info.appendChild(name);
-                info.appendChild(rarity);
-                
-                // Создаем счетчик карт
-                const counter = document.createElement('div');
-                counter.className = 'card-count';
-                counter.textContent = count;
-                
-                // Собираем элемент списка
-                listItem.appendChild(preview);
-                listItem.appendChild(info);
-                listItem.appendChild(counter);
-                
-                // Добавляем в сайдбар
-                sidebarCardList.appendChild(listItem);
-                
-                // Добавляем карты в соответствующие разделы коллекции
-                const cardGroup = document.createElement('div');
-                cardGroup.className = 'card-group';
-                
-                const countBadge = document.createElement('div');
-                countBadge.className = 'card-count';
-                countBadge.textContent = count;
-                cardGroup.appendChild(countBadge);
-                
-                // Создаем 1-3 карты для визуального отображения в стопке
-                const displayCount = Math.min(count, 3);
-                for (let i = 0; i < displayCount; i++) {
-                    const cardElement = document.createElement('div');
-                    cardElement.className = `stacked-card pos-${i}`;
-                    cardElement.style.backgroundColor = card.color;
-                    cardElement.innerHTML = `
-                        <div class="card-name">${card.name}</div>
-                        <div class="card-rarity">${card.rarity}</div>
-                        <div class="card-chance">${card.chance}</div>
-                    `;
-                    
-                    // Применяем стили мутации
-                    if (card.mutation === "shiny") {
-                        cardElement.classList.add('shiny');
-                    } else if (card.mutation === "golden") {
-                        cardElement.classList.add('golden');
-                    } else if (card.mutation === "ultra-legendary") {
-                        cardElement.classList.add('ultra-legendary');
-                    }
-                    
-                    cardGroup.appendChild(cardElement);
-                }
-                
-                // Добавляем группу карт в соответствующий раздел коллекции
-                if (card.mutation === "ultra-legendary") {
-                    ultraLegendaryCardsSection.appendChild(cardGroup);
-                } else if (card.mutation === "golden") {
-                    goldenCardsSection.appendChild(cardGroup);
-                } else if (card.mutation === "shiny") {
-                    shinyCardsSection.appendChild(cardGroup);
-                } else {
-                    normalCardsSection.appendChild(cardGroup);
+            // Также добавляем обработчик для ввода по нажатию Enter
+            playerNameInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    handleLogin();
                 }
             });
-        }
+        });
     </script>
 </body>
 </html>
