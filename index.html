@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>Коллекционные карточки</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -769,6 +769,137 @@
             z-index: 1001;
             display: none;
         }
+        
+        /* Стили для уведомлений о бустах */
+        .boost-notification {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1002;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+            animation: pulse 2s infinite;
+        }
+        
+        .boost-notification .icon {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.7); }
+            50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.7); }
+            100% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.7); }
+        }
+        
+        /* Стили для мега пака */
+        .mega-pack-modal-content {
+            position: relative;
+            width: 95%;
+            max-width: 1200px;
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .mega-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            max-width: 1200px;
+            margin: 0 auto;
+            max-height: 70vh;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        .mega-card {
+            width: 120px;
+            height: 160px;
+            border-radius: 8px;
+            padding: 10px;
+            box-sizing: border-box;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 1px black;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            position: relative;
+        }
+        
+        .mega-card-front, .mega-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        
+        .mega-card-front {
+            background-color: #333;
+            transform: rotateY(0deg);
+        }
+        
+        .mega-card-back {
+            background-color: inherit;
+            transform: rotateY(180deg);
+        }
+        
+        .mega-card.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .mega-card .card-name {
+            font-size: 24px;
+            margin-bottom: 3px;
+            font-weight: 900;
+        }
+        
+        .mega-card .card-rarity {
+            font-size: 12px;
+            margin-bottom: 2px;
+        }
+        
+        .mega-card .card-chance {
+            font-size: 10px;
+        }
+        
+        .mega-pack-title {
+            color: gold;
+            text-shadow: 1px 1px 2px black;
+            margin-bottom: 20px;
+            font-size: 28px;
+            animation: shine 2s infinite;
+        }
+        
+        .mega-pack-timer {
+            color: white;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -794,10 +925,12 @@
     <div>
         <button id="buyPack">Купить обычный пак (1 карта)</button>
         <button id="buyBigPack">Купить большой пак (5-7 карт)</button>
+        <button id="buyMegaPack">Мега пак (100 карт)</button>
         <button id="resetCollection" class="reset-btn">Сбросить коллекцию</button>
     </div>
     
     <div id="cooldown" class="cooldown" style="display: none;"></div>
+    <div id="megaPackTimer" class="cooldown" style="display: none; top: 50px;"></div>
     
     <div class="rarity-info">
         <h3>Шансы выпадения (от самых частых к самым редким):</h3>
@@ -841,6 +974,15 @@
                 <div class="big-pack-modal-content">
                     <h2 class="pack-title">Большой пак карт</h2>
                     <div id="multiCardContainer" class="multi-card-container"></div>
+                    <div class="scroll-indicator">Прокрутите вниз, чтобы увидеть все карты</div>
+                </div>
+            </div>
+            
+            <div id="megaPackModal" class="modal">
+                <div class="mega-pack-modal-content">
+                    <h2 class="mega-pack-title">⚡ МЕГА ПАК ⚡</h2>
+                    <div class="mega-pack-timer">Следующий мега пак через: <span id="nextMegaPackTime">25:00:00</span></div>
+                    <div id="megaCardContainer" class="mega-card-container"></div>
                     <div class="scroll-indicator">Прокрутите вниз, чтобы увидеть все карты</div>
                 </div>
             </div>
@@ -916,12 +1058,17 @@
         // Элементы DOM
         const buyPackBtn = document.getElementById('buyPack');
         const buyBigPackBtn = document.getElementById('buyBigPack');
+        const buyMegaPackBtn = document.getElementById('buyMegaPack');
         const resetBtn = document.getElementById('resetCollection');
         const cardModal = document.getElementById('cardModal');
         const bigPackModal = document.getElementById('bigPackModal');
+        const megaPackModal = document.getElementById('megaPackModal');
         const newCard = document.getElementById('newCard');
         const multiCardContainer = document.getElementById('multiCardContainer');
+        const megaCardContainer = document.getElementById('megaCardContainer');
         const cooldownElement = document.getElementById('cooldown');
+        const megaPackTimerElement = document.getElementById('megaPackTimer');
+        const nextMegaPackTimeElement = document.getElementById('nextMegaPackTime');
         const rarityChancesElement = document.getElementById('rarityChances');
         const accountValueElement = document.getElementById('accountValue');
         const accountRankElement = document.getElementById('accountRank');
@@ -949,10 +1096,138 @@
         let isCooldown = false;
         const COOLDOWN_TIME = 3000;
         const BIG_PACK_COOLDOWN = 5000;
+        const MEGA_PACK_COOLDOWN = 25 * 60 * 60 * 1000; // 25 часов в миллисекундах
         let playerName = localStorage.getItem('playerName') || '';
         let socket = null;
         let trades = [];
         let onlinePlayers = 0;
+        let megaPackAvailable = false;
+        let megaPackTimer = null;
+
+        // Инициализация таймера мега пака
+        function initMegaPackTimer() {
+            const lastMegaPackTime = localStorage.getItem('lastMegaPackTime');
+            const currentTime = Date.now();
+            
+            if (!lastMegaPackTime || (currentTime - parseInt(lastMegaPackTime)) >= MEGA_PACK_COOLDOWN) {
+                megaPackAvailable = true;
+                buyMegaPackBtn.disabled = false;
+                megaPackTimerElement.style.display = 'none';
+            } else {
+                megaPackAvailable = false;
+                buyMegaPackBtn.disabled = true;
+                megaPackTimerElement.style.display = 'block';
+                
+                const remainingTime = MEGA_PACK_COOLDOWN - (currentTime - parseInt(lastMegaPackTime));
+                updateMegaPackTimer(remainingTime);
+                
+                megaPackTimer = setInterval(() => {
+                    const newRemainingTime = MEGA_PACK_COOLDOWN - (Date.now() - parseInt(lastMegaPackTime));
+                    if (newRemainingTime <= 0) {
+                        clearInterval(megaPackTimer);
+                        megaPackAvailable = true;
+                        buyMegaPackBtn.disabled = false;
+                        megaPackTimerElement.style.display = 'none';
+                        showNotification('Мега пак теперь доступен!');
+                    } else {
+                        updateMegaPackTimer(newRemainingTime);
+                    }
+                }, 1000);
+            }
+        }
+
+        // Обновление таймера мега пака
+        function updateMegaPackTimer(ms) {
+            const hours = Math.floor(ms / (1000 * 60 * 60));
+            const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+            
+            const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            megaPackTimerElement.textContent = `Мега пак через: ${timeString}`;
+            nextMegaPackTimeElement.textContent = timeString;
+        }
+
+        // Функция для проверки специальных событий и бустов
+        function checkSpecialEvents() {
+            const now = new Date();
+            const dayOfWeek = now.getDay(); // 0 (воскресенье) - 6 (суббота)
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+
+            // Суббота (день 6) и буст ×1.5
+            const isSaturdayBoost = dayOfWeek === 6;
+            // Ночной буст ×1.3 (с 21:01 до 7:01)
+            const isNightBoost = (hours >= 21 && minutes >= 1) || (hours < 7) || (hours === 7 && minutes < 1);
+            // Первый день месяца ×2.0
+            const isFirstDayOfMonth = now.getDate() === 1;
+            // Часовая отметка (каждый час с 0 по 59 минуту) ×1.1
+            const isHourMark = minutes <= 5;
+
+            let boostMessage = "";
+            let boostIcon = "";
+            let totalBoost = 1.0;
+
+            if (isFirstDayOfMonth) {
+                boostMessage = "🎉 Мега буст! Первый день месяца! Шанс редких карт ×2.0!";
+                boostIcon = "🎉";
+                totalBoost *= 2.0;
+            } else if (isSaturdayBoost && isNightBoost) {
+                boostMessage = "🔥 Двойной буст! Сегодня суббота (+1.5×) и ночное время (+1.3×). Шанс редких карт увеличен!";
+                boostIcon = "🔥";
+                totalBoost *= 1.5 * 1.3;
+            } else if (isSaturdayBoost) {
+                boostMessage = "📅 Субботний буст! Шанс редких карт ×1.5 сегодня!";
+                boostIcon = "📅";
+                totalBoost *= 1.5;
+            } else if (isNightBoost) {
+                boostMessage = "🌙 Ночной буст! Шанс редких карт ×1.3 (с 21:01 до 7:01)!";
+                boostIcon = "🌙";
+                totalBoost *= 1.3;
+            } else if (isHourMark) {
+                boostMessage = "⏱ Часовой буст! Первые 5 минут каждого часа шанс ×1.1!";
+                boostIcon = "⏱";
+                totalBoost *= 1.1;
+            }
+
+            // Выводим сообщение (если есть буст)
+            if (boostMessage) {
+                showBoostNotification(boostMessage, boostIcon);
+            }
+
+            // Возвращаем множитель для использования в логике выпадения карт
+            return {
+                total: totalBoost,
+                details: {
+                    saturday: isSaturdayBoost ? 1.5 : 1.0,
+                    night: isNightBoost ? 1.3 : 1.0,
+                    firstDay: isFirstDayOfMonth ? 2.0 : 1.0,
+                    hourMark: isHourMark ? 1.1 : 1.0
+                }
+            };
+        }
+
+        // Функция для показа уведомления о бусте
+        function showBoostNotification(message, icon) {
+            const existingNotification = document.querySelector('.boost-notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+
+            const notification = document.createElement('div');
+            notification.className = 'boost-notification';
+            notification.innerHTML = `
+                <span class="icon">${icon}</span>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Автоматическое скрытие через 10 секунд
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 500);
+            }, 10000);
+        }
 
         // Функция для определения ранга коллекционера
         function getAccountRank(value) {
@@ -1026,18 +1301,18 @@
             };
             
             // В реальном приложении здесь будут обработчики событий WebSocket
-             socket.onopen = () => {
-                   console.log('WebSocket connected');
-                   sendPlayerInfo();
-                   updateTrades();
-             };
-             
-             socket.onmessage = handleWebSocketMessage;
-             
-             socket.onclose = () => {
-                 console.log('WebSocket disconnected');
-                 setTimeout(initWebSocket, 5000);
-             };
+            // socket.onopen = () => {
+            //     console.log('WebSocket connected');
+            //     sendPlayerInfo();
+            //     updateTrades();
+            // };
+            // 
+            // socket.onmessage = handleWebSocketMessage;
+            // 
+            // socket.onclose = () => {
+            //     console.log('WebSocket disconnected');
+            //     setTimeout(initWebSocket, 5000);
+            // };
             
             // Для демонстрации сразу "подключаемся"
             setTimeout(() => {
@@ -1137,13 +1412,30 @@
             }
         }
 
-        // Функция для получения случайной карты
+        // Функция для получения случайной карты с учетом бустов
         function getRandomCard() {
-            const randomValue = Math.random() * totalWeight;
+            const boosts = checkSpecialEvents();
+            const boostMultiplier = boosts.total;
+
+            // Увеличиваем вес редких карт в соответствии с бустом
+            const boostedCardTypes = cardTypes.map(card => {
+                // Чем реже карта, тем сильнее на нее влияет буст
+                const rarityFactor = 1 + (Math.log(card.weight) / Math.log(2)) / 10;
+                const boostedWeight = card.weight * (1 + (boostMultiplier - 1) * rarityFactor);
+                return {
+                    ...card,
+                    weight: boostedWeight
+                };
+            });
+
+            // Рассчитываем общий вес с учетом буста
+            const boostedTotalWeight = boostedCardTypes.reduce((sum, card) => sum + card.weight, 0);
+            
+            const randomValue = Math.random() * boostedTotalWeight;
             let cumulativeWeight = 0;
             let selectedCard = null;
             
-            for (const card of cardTypes) {
+            for (const card of boostedCardTypes) {
                 cumulativeWeight += card.weight;
                 if (randomValue <= cumulativeWeight) {
                     selectedCard = card;
@@ -1151,9 +1443,9 @@
                 }
             }
             
-            // Определяем мутацию карты
+            // Определяем мутацию карты (также с небольшим бустом)
             let mutation = null;
-            const mutationRoll = Math.random() * 100;
+            const mutationRoll = Math.random() * 100 * (1 + (boostMultiplier - 1) * 0.5);
             
             if (mutationRoll < 0.0125) { // 0.0125% шанс
                 mutation = "void";
@@ -1168,7 +1460,8 @@
             return {
                 ...selectedCard, 
                 id: Date.now() + Math.floor(Math.random() * 1000),
-                mutation: mutation
+                mutation: mutation,
+                boosted: boosts.details
             };
         }
         
@@ -1176,7 +1469,7 @@
         function applyMutationStyles(cardElement, mutation) {
             if (!mutation) return;
             
-            const backSide = cardElement.querySelector('.card-back, .multi-card-back');
+            const backSide = cardElement.querySelector('.card-back, .multi-card-back, .mega-card-back');
             const label = cardElement.querySelector('.mutation-label');
             
             if (mutation === "shiny") {
@@ -1283,6 +1576,7 @@
             isCooldown = true;
             buyPackBtn.disabled = true;
             buyBigPackBtn.disabled = true;
+            buyMegaPackBtn.disabled = true;
             let timeLeft = time / 1000;
             
             cooldownElement.style.display = 'block';
@@ -1297,6 +1591,7 @@
                     isCooldown = false;
                     buyPackBtn.disabled = false;
                     buyBigPackBtn.disabled = false;
+                    buyMegaPackBtn.disabled = !megaPackAvailable;
                     cooldownElement.style.display = 'none';
                 }
             }, 1000);
@@ -1833,6 +2128,112 @@
             }, 1000);
         });
         
+        // Покупка мега пака (100 карт)
+        buyMegaPackBtn.addEventListener('click', function() {
+            if (isCooldown || !megaPackAvailable) return;
+            
+            // Активируем кулдаун
+            startCooldown(COOLDOWN_TIME);
+            
+            // Очищаем контейнер для карт
+            megaCardContainer.innerHTML = '';
+            
+            // Создаем карты для мега пака
+            const cards = [];
+            for (let i = 0; i < 100; i++) {
+                cards.push(getRandomCard());
+            }
+            
+            // Показываем модальное окно с мега паком карт
+            megaPackModal.style.display = 'flex';
+            
+            // Создаем элементы карт
+            cards.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'mega-card';
+                cardElement.innerHTML = `
+                    <div class="mega-card-front">Карта ${index + 1}</div>
+                    <div class="mega-card-back" style="background-color: ${card.color}">
+                        <div class="card-name">${card.name}</div>
+                        <div class="card-rarity">${card.rarity}</div>
+                        <div class="card-chance">${card.chance}</div>
+                        <div class="mutation-label"></div>
+                    </div>
+                `;
+                megaCardContainer.appendChild(cardElement);
+                
+                // Применяем мутацию
+                applyMutationStyles(cardElement, card.mutation);
+                
+                // Анимируем переворот карточек с задержкой
+                setTimeout(() => {
+                    cardElement.classList.add('flipped');
+                    
+                    // Прокручиваем к последней открытой карте
+                    if (index === cards.length - 1) {
+                        setTimeout(() => {
+                            cardElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }, 300);
+                    }
+                }, 500 + (index * 50)); // Меньшая задержка для мега пака
+            });
+            
+            // Добавляем все карты в коллекцию
+            userCollection.push(...cards);
+            saveCollection();
+            updateAccountValue();
+            
+            // Сохраняем время открытия мега пака
+            localStorage.setItem('lastMegaPackTime', Date.now());
+            megaPackAvailable = false;
+            buyMegaPackBtn.disabled = true;
+            
+            // Запускаем таймер до следующего мега пака
+            initMegaPackTimer();
+            
+            // Добавляем сообщения в чат о редких картах
+            cards.forEach(card => {
+                const isCommonCard = ['H', 'F'].includes(card.name);
+                const isNormalMutation = !card.mutation || card.mutation === "shiny";
+                
+                if (!(isCommonCard && isNormalMutation)) {
+                    let message = `Получена карта ${card.name}`;
+                    if (card.mutation === "shiny") {
+                        message = `Получена блестящая карта ${card.name}!`;
+                    } else if (card.mutation === "golden") {
+                        message = `Получена золотая карта ${card.name}!!`;
+                    } else if (card.mutation === "ultra-legendary") {
+                        message = `Получена УЛЬТРАЛЕГЕНДАРНАЯ карта ${card.name}!!!`;
+                    } else if (card.mutation === "void") {
+                        message = `Получена ПУСТОТНАЯ карта ${card.name}!!!!`;
+                    }
+                    
+                    addChatMessage(message, card.color, card.mutation);
+                    
+                    // Отправляем сообщение в глобальный чат
+                    if (socket) {
+                        const chatMessage = {
+                            type: 'chat_message',
+                            text: message,
+                            mutation: card.mutation
+                        };
+                        socket.send(JSON.stringify(chatMessage));
+                    }
+                }
+            });
+            
+            // Обновляем коллекцию и прокручиваем к новым картам
+            setTimeout(() => {
+                updateCollection();
+                
+                // Прокручиваем коллекцию к последним добавленным картам
+                collection.scrollTo({
+                    top: collection.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }, 1000);
+        });
+        
         // Закрытие модальных окон по клику на затемненную область
         cardModal.addEventListener('click', function(e) {
             if (e.target === cardModal) {
@@ -1853,6 +2254,23 @@
                 } else {
                     // Если не все карты открыты, открываем все
                     document.querySelectorAll('.multi-card').forEach(card => {
+                        card.classList.add('flipped');
+                    });
+                }
+            }
+        });
+        
+        megaPackModal.addEventListener('click', function(e) {
+            if (e.target === megaPackModal) {
+                // Закрываем только если все карты открыты
+                const allFlipped = Array.from(document.querySelectorAll('.mega-card'))
+                    .every(card => card.classList.contains('flipped'));
+                
+                if (allFlipped) {
+                    megaPackModal.style.display = 'none';
+                } else {
+                    // Если не все карты открыты, открываем все
+                    document.querySelectorAll('.mega-card').forEach(card => {
                         card.classList.add('flipped');
                     });
                 }
@@ -1894,6 +2312,12 @@
             updatePlayerCounters();
             updateTradeSelects();
             
+            // Проверяем бусты при загрузке
+            checkSpecialEvents();
+            
+            // Инициализируем таймер мега пака
+            initMegaPackTimer();
+            
             // Инициализируем WebSocket соединение
             initWebSocket();
         }
@@ -1918,4 +2342,4 @@
         });
     </script>
 </body>
-</html>
+    </html>
