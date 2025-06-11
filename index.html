@@ -1030,6 +1030,7 @@
     <script>
         // Правильный порядок карточек от H (самой частой) до SSS (самой редкой)
         const cardTypes = [
+            { name: "Test", rarity: "Тестовый", color: "#AAAAAA", weight: 10000}
             { name: "H", rarity: "Базовый", color: "#AAAAAA", weight: 16384 },
             { name: "F", rarity: "Обычный", color: "#777777", weight: 4096 },
             { name: "E", rarity: "Необычный", color: "#5555FF", weight: 1024 },
@@ -1044,6 +1045,7 @@
             { name: "S", rarity: "Превосходный", color: "#FF8800", weight: 0.00390625 },
             { name: "SS+", rarity: "Сверхъестественный", color: "#8800FF", weight: 0.0009765625 },
             { name: "SSS", rarity: "Вселенский", color: "#FF0088", weight: 0.000244140625 }
+            { name: "U", rarity: "Невозможный", color: "#FFFFFF", weight: 0.0000091753923 }
         ];
 
         // Рассчитываем общий вес для вероятностей
